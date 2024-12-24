@@ -4,8 +4,6 @@ Since joystick #1 and keyboard inputs are read from the same ports, they can con
 
 See the [scankeys](../scankeys) project for a demo of scanning the keyboard and you can see how joystick inputs conflict.
 
-**NOTE: WORK IN PROGRESS.  CURRENT STATE IS DEMO PROTOTYPE IS MANUAL SCANNING WITHOUT CONFLICT.  PLANNED WORK IS TO UPDATE IRQ SCANNING TO CHANGE DEFAULT BEHAVIOR.**
-
 Usage:
 
 ````
@@ -13,7 +11,9 @@ LOAD "SCANJOY",8,1
 SYS 49152
 ````
 
-Optional (demo prototype test comparing addressing with default behavior):
+PRESS STOP+RESTORE to restore normal (conflicting) behavior, uninstalling vector changes.
+
+Optional (demo prototype showing joysticks and keyboard values):
 ````
 LOAD "TEST",8
 RUN

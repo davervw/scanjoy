@@ -4,7 +4,7 @@
 ; github.com/davervw
 ; www.davevw.com
 
-lstx=$c5     ; last keyboard scan 0..64, 64=none
+scan=$cb     ; last keyboard scan 0..64, 64=none
 shflag=$28d  ; shift(1)/commodore(2)/control(4) flags
 CIAPRA=$dc00 ; CIA#1 Data Port Register A
 CIAPRB=$dc01 ; CIA#1 Data Port Register B
@@ -12,6 +12,10 @@ kbdmatrix=$eb81
 CHROUT=$ffd2 ; KERNAL character out
 joy1 = $fe
 joy2 = $ff
+oldirq = $ea31
+oldkeylog = $eb48
+irqvector = $314
+keylogvector = $28f
 
 *=$c000
 	jmp init
@@ -21,24 +25,23 @@ init:
 	lda #<title
 	ldx #>title
 	jsr strout
+	sei
+	lda #<newirq
+	ldx #>newirq
+	sta irqvector
+	stx irqvector+1
+	lda #<newkeylog
+	ldx #>newkeylog
+	sta keylogvector
+	stx keylogvector+1
+	cli
 	rts
 
 doscan:
+	php
 	sei
-	lda #$ff
-	sta CIAPRA
--   lda CIAPRB
-    cmp CIAPRB
-	bne -
-	eor #$ff
-	sta joy1
--   lda CIAPRA
-    cmp CIAPRA
-	bne -
-	eor #$ff
-	sta joy2
 	lda #64
-	sta lstx
+	sta scan
 	lda #0
 	sta shflag
 	sta CIAPRA
@@ -68,7 +71,7 @@ nextcol:
 	sta shflag
 	bne +
 notshift:
-	sty lstx
+	sty scan
 +	iny
 	tya
 	and #7
@@ -88,12 +91,13 @@ notrow:
 	rol
 	tax
 	bcs scancol
-	nop
 exitscan:
-	lda lstx
+	lda #$7f
+	sta CIAPRA
+	lda scan
 	ldx shflag
 	ldy #0
-	cli
+	plp
 	rts
 
 strout:
@@ -106,6 +110,27 @@ strout:
 	iny
 	bne -
 +	rts
+
+newirq:
+	lda #$ff
+	sta CIAPRA
+-   lda CIAPRB
+    cmp CIAPRB
+	bne -
+	eor #$ff
+	sta joy1
+-   lda CIAPRA
+    cmp CIAPRA
+	bne -
+	eor #$ff
+	sta joy2
+	lda #$7f
+	sta CIAPRA
+	jmp oldirq
+
+newkeylog:
+	jsr doscan
+	jmp oldkeylog
 
 loginit:
 	php
