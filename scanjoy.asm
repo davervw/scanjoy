@@ -111,8 +111,6 @@ notrow:
 	tax
 	bcs scancol
 exitscan:
-	lda #$7f
-	sta CIAPRA
 	lda scan
 	ldx shflag
 	ldy #0
@@ -143,8 +141,6 @@ newirq:
 	bne -
 	eor #$ff
 	sta joy2
-	lda #$7f
-	sta CIAPRA
 	jmp oldirq
 
 newkeylog:

@@ -24,15 +24,15 @@
     22  c003 4c24c0             	jmp doscan
     23                          
     24                          init:
-    25  c006 a9f4               	lda #<title
+    25  c006 a9ea               	lda #<title
     26  c008 a2c0               	ldx #>title
-    27  c00a 20b8c0             	jsr strout
+    27  c00a 20b3c0             	jsr strout
     28  c00d 78                 	sei
-    29  c00e a9c9               	lda #<newirq
+    29  c00e a9c4               	lda #<newirq
     30  c010 a2c0               	ldx #>newirq
     31  c012 8d1403             	sta irqvector
     32  c015 8e1503             	stx irqvector+1
-    33  c018 a9ee               	lda #<newkeylog
+    33  c018 a9e4               	lda #<newkeylog
     34  c01a a2c0               	ldx #>newkeylog
     35  c01c 8d8f02             	sta keylogvector
     36  c01f 8e9002             	stx keylogvector+1
@@ -113,49 +113,45 @@
    111  c0a7 aa                 	tax
    112  c0a8 b098               	bcs scancol
    113                          exitscan:
-   114  c0aa a97f               	lda #$7f
-   115  c0ac 8d00dc             	sta CIAPRA
-   116  c0af a5cb               	lda scan
-   117  c0b1 ae8d02             	ldx shflag
-   118  c0b4 a000               	ldy #0
-   119  c0b6 28                 	plp
-   120  c0b7 60                 	rts
-   121                          
-   122                          strout:
-   123  c0b8 85fb               	sta $fb
-   124  c0ba 86fc               	stx $fc
-   125  c0bc a000               	ldy #0
-   126  c0be b1fb               -	lda ($fb),y
-   127  c0c0 f006               	beq +
-   128  c0c2 20d2ff             	jsr CHROUT
-   129  c0c5 c8                 	iny
-   130  c0c6 d0f6               	bne -
-   131  c0c8 60                 +	rts
-   132                          
-   133                          newirq:
-   134  c0c9 a9ff               	lda #$ff
-   135  c0cb 8d00dc             	sta CIAPRA
-   136  c0ce ad01dc             -   lda CIAPRB
-   137  c0d1 cd01dc                 cmp CIAPRB
-   138  c0d4 d0f8               	bne -
-   139  c0d6 49ff               	eor #$ff
-   140  c0d8 85fd               	sta joy1
-   141  c0da ad00dc             -   lda CIAPRA
-   142  c0dd cd00dc                 cmp CIAPRA
-   143  c0e0 d0f8               	bne -
-   144  c0e2 49ff               	eor #$ff
-   145  c0e4 85fe               	sta joy2
-   146  c0e6 a97f               	lda #$7f
-   147  c0e8 8d00dc             	sta CIAPRA
-   148  c0eb 4c31ea             	jmp oldirq
+   114  c0aa a5cb               	lda scan
+   115  c0ac ae8d02             	ldx shflag
+   116  c0af a000               	ldy #0
+   117  c0b1 28                 	plp
+   118  c0b2 60                 	rts
+   119                          
+   120                          strout:
+   121  c0b3 85fb               	sta $fb
+   122  c0b5 86fc               	stx $fc
+   123  c0b7 a000               	ldy #0
+   124  c0b9 b1fb               -	lda ($fb),y
+   125  c0bb f006               	beq +
+   126  c0bd 20d2ff             	jsr CHROUT
+   127  c0c0 c8                 	iny
+   128  c0c1 d0f6               	bne -
+   129  c0c3 60                 +	rts
+   130                          
+   131                          newirq:
+   132  c0c4 a9ff               	lda #$ff
+   133  c0c6 8d00dc             	sta CIAPRA
+   134  c0c9 ad01dc             -   lda CIAPRB
+   135  c0cc cd01dc                 cmp CIAPRB
+   136  c0cf d0f8               	bne -
+   137  c0d1 49ff               	eor #$ff
+   138  c0d3 85fd               	sta joy1
+   139  c0d5 ad00dc             -   lda CIAPRA
+   140  c0d8 cd00dc                 cmp CIAPRA
+   141  c0db d0f8               	bne -
+   142  c0dd 49ff               	eor #$ff
+   143  c0df 85fe               	sta joy2
+   144  c0e1 4c31ea             	jmp oldirq
+   145                          
+   146                          newkeylog:
+   147  c0e4 2024c0             	jsr doscan
+   148  c0e7 4c48eb             	jmp oldkeylog
    149                          
-   150                          newkeylog:
-   151  c0ee 2024c0             	jsr doscan
-   152  c0f1 4c48eb             	jmp oldkeylog
-   153                          
-   154                          title: 
-   155  c0f4 93                 	!byte 147
-   156  c0f5 125343414e4a4f59...	!text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
-   157  c11d 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
-   158  c132 1242592044415649...	!text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
-   159  c15a 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,148,32,13
+   150                          title: 
+   151  c0ea 93                 	!byte 147
+   152  c0eb 125343414e4a4f59...	!text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
+   153  c113 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
+   154  c128 1242592044415649...	!text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
+   155  c150 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,148,32,13
