@@ -83,6 +83,8 @@ nextcol:
 	lsr
 	pha
 	bcs +
+	cpy #$3f
+	beq notshift
 	lda kbdmatrix,y
 	cmp #5
 	bcs notshift

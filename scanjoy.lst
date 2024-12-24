@@ -24,15 +24,15 @@
     22  c003 4c24c0             	jmp doscan
     23                          
     24                          init:
-    25  c006 a9ea               	lda #<title
+    25  c006 a9ee               	lda #<title
     26  c008 a2c0               	ldx #>title
-    27  c00a 20b3c0             	jsr strout
+    27  c00a 20b7c0             	jsr strout
     28  c00d 78                 	sei
-    29  c00e a9c4               	lda #<newirq
+    29  c00e a9c8               	lda #<newirq
     30  c010 a2c0               	ldx #>newirq
     31  c012 8d1403             	sta irqvector
     32  c015 8e1503             	stx irqvector+1
-    33  c018 a9e4               	lda #<newkeylog
+    33  c018 a9e8               	lda #<newkeylog
     34  c01a a2c0               	ldx #>newkeylog
     35  c01c 8d8f02             	sta keylogvector
     36  c01f 8e9002             	stx keylogvector+1
@@ -51,7 +51,7 @@
     49  c035 cd01dc                 cmp CIAPRB
     50  c038 d0f8               	bne -
     51  c03a c9ff               	cmp #$ff
-    52  c03c f06c               	beq exitscan
+    52  c03c f070               	beq exitscan
     53  c03e a000               	ldy #0
     54  c040 a2fe               	ldx #$fe
     55                          scancol:
@@ -68,7 +68,7 @@
     66  c05c d0f8               	bne -
     67  c05e 05fd               	ora joy1
     68  c060 c9ff               	cmp #$ff
-    69  c062 f03b               	beq notrow
+    69  c062 f03f               	beq notrow
     70  c064 48                 	pha
     71  c065 a9ff               	lda #$ff
     72  c067 8d00dc             	sta CIAPRA
@@ -84,74 +84,76 @@
     82                          nextcol:
     83  c07d 4a                 	lsr
     84  c07e 48                 	pha
-    85  c07f b011               	bcs +
-    86  c081 b981eb             	lda kbdmatrix,y
-    87  c084 c905               	cmp #5
-    88  c086 b008               	bcs notshift
-    89  c088 0d8d02             	ora shflag
-    90  c08b 8d8d02             	sta shflag
-    91  c08e d002               	bne +
-    92                          notshift:
-    93  c090 84cb               	sty scan
-    94  c092 c8                 +	iny
-    95  c093 98                 	tya
-    96  c094 2907               	and #7
-    97  c096 18                 	clc
-    98  c097 d001               	bne +
-    99  c099 38                 	sec
-   100  c09a 68                 +	pla
-   101  c09b b007               	bcs +
-   102  c09d 90de               	bcc nextcol
-   103                          notrow:	
-   104  c09f 98                 	tya
-   105  c0a0 18                 	clc
-   106  c0a1 6908               	adc #8
-   107  c0a3 a8                 	tay
-   108  c0a4 8a                 +	txa
-   109  c0a5 38                 	sec
-   110  c0a6 2a                 	rol
-   111  c0a7 aa                 	tax
-   112  c0a8 b098               	bcs scancol
-   113                          exitscan:
-   114  c0aa a5cb               	lda scan
-   115  c0ac ae8d02             	ldx shflag
-   116  c0af a000               	ldy #0
-   117  c0b1 28                 	plp
-   118  c0b2 60                 	rts
-   119                          
-   120                          strout:
-   121  c0b3 85fb               	sta $fb
-   122  c0b5 86fc               	stx $fc
-   123  c0b7 a000               	ldy #0
-   124  c0b9 b1fb               -	lda ($fb),y
-   125  c0bb f006               	beq +
-   126  c0bd 20d2ff             	jsr CHROUT
-   127  c0c0 c8                 	iny
-   128  c0c1 d0f6               	bne -
-   129  c0c3 60                 +	rts
-   130                          
-   131                          newirq:
-   132  c0c4 a9ff               	lda #$ff
-   133  c0c6 8d00dc             	sta CIAPRA
-   134  c0c9 ad01dc             -   lda CIAPRB
-   135  c0cc cd01dc                 cmp CIAPRB
-   136  c0cf d0f8               	bne -
-   137  c0d1 49ff               	eor #$ff
-   138  c0d3 85fd               	sta joy1
-   139  c0d5 ad00dc             -   lda CIAPRA
-   140  c0d8 cd00dc                 cmp CIAPRA
-   141  c0db d0f8               	bne -
-   142  c0dd 49ff               	eor #$ff
-   143  c0df 85fe               	sta joy2
-   144  c0e1 4c31ea             	jmp oldirq
-   145                          
-   146                          newkeylog:
-   147  c0e4 2024c0             	jsr doscan
-   148  c0e7 4c48eb             	jmp oldkeylog
-   149                          
-   150                          title: 
-   151  c0ea 93                 	!byte 147
-   152  c0eb 125343414e4a4f59...	!text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
-   153  c113 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
-   154  c128 1242592044415649...	!text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
-   155  c150 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,148,32,13
+    85  c07f b015               	bcs +
+    86  c081 c03f               	cpy #$3f
+    87  c083 f00f               	beq notshift
+    88  c085 b981eb             	lda kbdmatrix,y
+    89  c088 c905               	cmp #5
+    90  c08a b008               	bcs notshift
+    91  c08c 0d8d02             	ora shflag
+    92  c08f 8d8d02             	sta shflag
+    93  c092 d002               	bne +
+    94                          notshift:
+    95  c094 84cb               	sty scan
+    96  c096 c8                 +	iny
+    97  c097 98                 	tya
+    98  c098 2907               	and #7
+    99  c09a 18                 	clc
+   100  c09b d001               	bne +
+   101  c09d 38                 	sec
+   102  c09e 68                 +	pla
+   103  c09f b007               	bcs +
+   104  c0a1 90da               	bcc nextcol
+   105                          notrow:	
+   106  c0a3 98                 	tya
+   107  c0a4 18                 	clc
+   108  c0a5 6908               	adc #8
+   109  c0a7 a8                 	tay
+   110  c0a8 8a                 +	txa
+   111  c0a9 38                 	sec
+   112  c0aa 2a                 	rol
+   113  c0ab aa                 	tax
+   114  c0ac b094               	bcs scancol
+   115                          exitscan:
+   116  c0ae a5cb               	lda scan
+   117  c0b0 ae8d02             	ldx shflag
+   118  c0b3 a000               	ldy #0
+   119  c0b5 28                 	plp
+   120  c0b6 60                 	rts
+   121                          
+   122                          strout:
+   123  c0b7 85fb               	sta $fb
+   124  c0b9 86fc               	stx $fc
+   125  c0bb a000               	ldy #0
+   126  c0bd b1fb               -	lda ($fb),y
+   127  c0bf f006               	beq +
+   128  c0c1 20d2ff             	jsr CHROUT
+   129  c0c4 c8                 	iny
+   130  c0c5 d0f6               	bne -
+   131  c0c7 60                 +	rts
+   132                          
+   133                          newirq:
+   134  c0c8 a9ff               	lda #$ff
+   135  c0ca 8d00dc             	sta CIAPRA
+   136  c0cd ad01dc             -   lda CIAPRB
+   137  c0d0 cd01dc                 cmp CIAPRB
+   138  c0d3 d0f8               	bne -
+   139  c0d5 49ff               	eor #$ff
+   140  c0d7 85fd               	sta joy1
+   141  c0d9 ad00dc             -   lda CIAPRA
+   142  c0dc cd00dc                 cmp CIAPRA
+   143  c0df d0f8               	bne -
+   144  c0e1 49ff               	eor #$ff
+   145  c0e3 85fe               	sta joy2
+   146  c0e5 4c31ea             	jmp oldirq
+   147                          
+   148                          newkeylog:
+   149  c0e8 2024c0             	jsr doscan
+   150  c0eb 4c48eb             	jmp oldkeylog
+   151                          
+   152                          title: 
+   153  c0ee 93                 	!byte 147
+   154  c0ef 125343414e4a4f59...	!text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
+   155  c117 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
+   156  c12c 1242592044415649...	!text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
+   157  c154 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,148,32,13
