@@ -3,6 +3,9 @@
 ; MIT LICENSE
 ; github.com/davervw
 ; www.davevw.com
+;
+; avoid joystick / keyboard conflicts by detecting the conflicts and dealing with them
+; masks joystick out of keyboard reads, and masks keyboard out of joystick reads
 
 scan=$cb     ; last keyboard scan 0..64, 64=none
 shflag=$28d  ; shift(1)/commodore(2)/control(4) flags
