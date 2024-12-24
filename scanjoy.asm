@@ -10,8 +10,8 @@ CIAPRA=$dc00 ; CIA#1 Data Port Register A
 CIAPRB=$dc01 ; CIA#1 Data Port Register B
 kbdmatrix=$eb81
 CHROUT=$ffd2 ; KERNAL character out
-joy1 = $fe
-joy2 = $ff
+joy1 = $fd
+joy2 = $fe
 oldirq = $ea31
 oldkeylog = $eb48
 irqvector = $314
@@ -40,6 +40,7 @@ init:
 doscan:
 	php
 	sei
+repeatscan:	
 	lda #64
 	sta scan
 	lda #0
@@ -91,6 +92,14 @@ notrow:
 	rol
 	tax
 	bcs scancol
+	lda #$ff
+	sta CIAPRA
+-	lda CIAPRB
+	cmp CIAPRB
+	bne -
+	eor #$ff
+	cmp joy1
+	bne repeatscan
 exitscan:
 	lda #$7f
 	sta CIAPRA

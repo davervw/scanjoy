@@ -11,6 +11,8 @@ LOAD "SCANJOY",8,1
 SYS 49152
 ````
 
+Joystick values are continuously stored at memory 253 and 254.
+
 PRESS STOP+RESTORE to restore normal (conflicting) behavior, uninstalling vector changes.
 
 Optional (demo prototype showing joysticks and keyboard values):
@@ -18,5 +20,3 @@ Optional (demo prototype showing joysticks and keyboard values):
 LOAD "TEST",8
 RUN
 ````
-
-![scanjoy.png](scanjoy.png)
