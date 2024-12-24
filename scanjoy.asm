@@ -40,7 +40,6 @@ init:
 doscan:
 	php
 	sei
-repeatscan:	
 	lda #64
 	sta scan
 	lda #0
@@ -54,6 +53,13 @@ repeatscan:
 	ldy #0
 	ldx #$fe
 scancol:
+	lda #$ff
+	sta CIAPRA
+-   lda CIAPRB
+    cmp CIAPRB
+	bne -
+	eor #$ff
+	sta joy1
 	stx CIAPRA
 -   lda CIAPRB
     cmp CIAPRB
@@ -61,6 +67,18 @@ scancol:
 	ora joy1
 	cmp #$ff
 	beq notrow
+	pha
+	lda #$ff
+	sta CIAPRA
+-   lda CIAPRB
+    cmp CIAPRB
+	bne -
+	eor #$ff
+	cmp joy1
+	beq +
+	pla
+	jmp scancol
++	pla
 nextcol:
 	lsr
 	pha
@@ -92,14 +110,6 @@ notrow:
 	rol
 	tax
 	bcs scancol
-	lda #$ff
-	sta CIAPRA
--	lda CIAPRB
-	cmp CIAPRB
-	bne -
-	eor #$ff
-	cmp joy1
-	bne repeatscan
 exitscan:
 	lda #$7f
 	sta CIAPRA
