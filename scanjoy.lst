@@ -24,8 +24,8 @@
     22  c003 4c24c0             	jmp doscan
     23                          
     24                          init:
-    25  c006 a90c               	lda #<title
-    26  c008 a2c1               	ldx #>title
+    25  c006 a9dd               	lda #<title
+    26  c008 a2c0               	ldx #>title
     27  c00a 20a1c0             	jsr strout
     28  c00d 78                 	sei
     29  c00e a9b2               	lda #<newirq
@@ -143,48 +143,9 @@
    141  c0d7 2024c0             	jsr doscan
    142  c0da 4c48eb             	jmp oldkeylog
    143                          
-   144                          loginit:
-   145  c0dd 08                 	php
-   146  c0de 48                 	pha
-   147  c0df a900               	lda #00
-   148  c0e1 8deec0             	sta loga_store+1
-   149  c0e4 a9c2               	lda #$c2
-   150  c0e6 8defc0             	sta loga_store+2
-   151  c0e9 68                 	pla
-   152  c0ea 28                 	plp
-   153  c0eb 60                 	rts
-   154                          
-   155                          loga:
-   156  c0ec 08                 	php
-   157                          loga_store:
-   158  c0ed 8d00c2             	sta $c200
-   159  c0f0 eeeec0             	inc loga_store+1
-   160  c0f3 d003               	bne +
-   161  c0f5 eeefc0             	inc loga_store+2
-   162  c0f8 28                 +	plp
-   163  c0f9 60                 	rts
-   164                          
-   165                          logx:
-   166  c0fa 08                 	php
-   167  c0fb 48                 	pha
-   168  c0fc 8a                 	txa
-   169  c0fd 20ecc0             	jsr loga
-   170  c100 68                 	pla
-   171  c101 28                 	plp
-   172  c102 60                 	rts
-   173                          
-   174                          logy:
-   175  c103 08                 	php
-   176  c104 48                 	pha
-   177  c105 98                 	tya
-   178  c106 20ecc0             	jsr loga
-   179  c109 68                 	pla
-   180  c10a 28                 	plp
-   181  c10b 60                 	rts
-   182                          
-   183                          title: 
-   184  c10c 93                 	!byte 147
-   185  c10d 125343414e4a4f59...	!text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
-   186  c135 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
-   187  c14a 1242592044415649...	!text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
-   188  c172 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,148,32,13
+   144                          title: 
+   145  c0dd 93                 	!byte 147
+   146  c0de 125343414e4a4f59...	!text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
+   147  c106 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
+   148  c11b 1242592044415649...	!text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
+   149  c143 9d9d9d9d9d9d9d9d...	!text 157,157,157,157,157,157,157,157,157,157,148,32,13

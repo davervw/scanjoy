@@ -141,45 +141,6 @@ newkeylog:
 	jsr doscan
 	jmp oldkeylog
 
-loginit:
-	php
-	pha
-	lda #00
-	sta loga_store+1
-	lda #$c2
-	sta loga_store+2
-	pla
-	plp
-	rts
-
-loga:
-	php
-loga_store:
-	sta $c200
-	inc loga_store+1
-	bne +
-	inc loga_store+2
-+	plp
-	rts
-
-logx:
-	php
-	pha
-	txa
-	jsr loga
-	pla
-	plp
-	rts
-
-logy:
-	php
-	pha
-	tya
-	jsr loga
-	pla
-	plp
-	rts
-
 title: 
 	!byte 147
 	!text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
