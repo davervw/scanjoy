@@ -6,6 +6,8 @@ Since joystick #1 and keyboard inputs are read from the same ports, they can con
 
 See the [scankeys](../scankeys) project for a demo of scanning the keyboard and you can see how joystick inputs conflict.
 
+More content is available at [blog entry](https://techwithdave.davevw.com/2024/12/avoid-conflicts-between-c64-keyboard.html).
+
 Usage:
 
 ````
@@ -22,3 +24,5 @@ RUN
 ````
 
 PRESS STOP+RESTORE to restore normal (conflicting) behavior, uninstalling vector changes.
+
+![scanjoy.png](scanjoy.png)
