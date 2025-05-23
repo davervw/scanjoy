@@ -1,0 +1,13 @@
+keyboard matrix
+write FF to DC00
+read DC01, if key pressed then a bit is off
+
+and joystick#1 DC01 too, but conflict with keyboard scan
+1=up
+2=down
+4=left
+8=right
+16=fire
+look for bit off
+
+joystick#2 DC00, same algorithm

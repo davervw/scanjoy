@@ -1,0 +1,37 @@
+(C:$e5d4) h e000 ffff 01 dc
+e93e # scroll up - control key
+ea94 # general key scan - start
+eaac # general key scan - debounce
+eaaf # general key scan - debounce
+f6bd # irq handler - debounce
+f6c0 # irq handler - debounce - checking for stop
+f6cd # irq handler - debounce - checking for ctrl
+f6d0 # irq handler - debounce - checking for ctrl
+(C:$e5d4) h e000 ffff 00 dc
+e93b # scroll up - control key
+e946 # scroll up - stop key
+ea91 # general key scan - start
+eaa6 # general key scan - column
+ead8 # general key scan - next column
+eb45 # general key scan - setup for stop key sense
+f6ca # irq handler - check shift - store in $91
+f6d5 # irq handler - set for stop key sense ($7f -> DC00)
+fdac # initialize io device - setup for stop key sense
+
+
+fffe irq -> ff48 push flags, check for BRK instruction
+   BRK -> JMP ($0316) -> FE66
+ NOBRK -> JMP ($0314) -> EA31
+
+ea31 - update jiffy clock
+       blink cursor occasionally
+       check cassette switches - motors on/off
+ea7b   jsr ea87 - scan keyboard
+       pop registers
+ea86   rti
+
+eb81 - scan code decode table, including shift states
+       0f -> 01
+       34 -> 01
+       3a -> 04
+       3d -> 02

@@ -1,0 +1,38 @@
+IRQ vector ($0314) -> EA31 (oldirq)
+interpret key vector ($028f) -> EB48 (oldkeylog)
+
+ea87 scnkey modifies:
+  $cb (197) scan code
+  $f5 $f6 => EB81
+  $028d (653) shift code
+
+newirq
+  check joystick 1, store in $fe
+  check joystick 2, store in $ff
+  jmp oldirq
+
+.C:c000  A9 FF       LDA #$FF
+.C:c002  8D 00 DC    STA $DC00
+.C:c005  AD 01 DC    LDA $DC01
+.C:c008  CD 01 DC    CMP $DC01
+.C:c00b  D0 F8       BNE $C005
+.C:c00d  85 FE       STA $FE
+.C:c00f  AD 00 DC    LDA $DC00
+.C:c012  CD 00 DC    CMP $DC00
+.C:c015  D0 F8       BNE $C00F
+.C:c017  85 FF       STA $FF
+.C:c019  AD 8D 02    LDA $028D
+.C:c01c  8D 00 C1    STA $C100
+.C:c01f  A9 7F       LDA #$7F
+.C:c021  8D 00 DC    STA $DC00
+.C:c024  4C 31 EA    JMP $EA31
+
+>C:c000  a9 ff 8d 00  dc ad 01 dc  cd 01 dc d0  f8 85 fe ad
+>C:c010  00 dc cd 00  dc d0 f8 85  ff ad 8d 02  8d 00 c1 a9
+>C:c020  7f 8d 00 dc  4c 31 ea                             
+
+newkeylog ; and newscnkey
+  perform equivalent scnkey, but compensate for joystick 1
+  jmp oldkeylog
+
+10 printpeek(254)peek(255)peek(197)peek(145)peek(653):run

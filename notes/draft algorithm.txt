@@ -1,0 +1,32 @@
+*(C5) = 64
+*(28D) = 0
+scan = 0
+row = 0xFF
+do col = *(DC01) loop until col == *(DC01)
+joy1 = col XOR 0xFF
+do col = *(DC00) loop until col == *(DC00)
+joy2 = col XOR 0xFF
+row = 0x00
+do col = *(DC01) loop until col == *(DC01)
+if (col == 0xFF)
+  return
+row = 0xFE
+do
+  *(DC00) = row
+  do col = *(DC01) loop until col == *(DC01)
+  col |= joy1
+  if (col != 0xFF)
+    do
+      col >>= 1
+      if (!carry)
+        if (is shift)
+           update shift
+        else
+           *(C5) = scan
+      ++scan
+    loop while ((scan & 7) != 0) # 8 times
+  else
+    scan += 8
+  row = (row << 1) | 1
+loop while (carry)
+return
