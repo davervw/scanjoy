@@ -146,6 +146,8 @@ newirq:
     bne -
     eor #$ff
     sta joy2
+    lda #$7f
+    sta CIAPRA
     jmp oldirq
 
 newkeylog:
@@ -154,7 +156,7 @@ newkeylog:
 
 title: 
     !byte 147
-    !text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
+    !text 18,"SCANJOY (C) 2025     GITHUB.COM/DAVERVW"
     !text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
     !text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
     !text 157,157,157,157,157,157,157,157,157,157,148,32,13

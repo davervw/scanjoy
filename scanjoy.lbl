@@ -4,13 +4,13 @@
 	joy1	= $fd
 	shflag	= $28d
 	oldirq	= $ea31
-	title	= $c0ee	; ?
+	title	= $c0f3	; ?
 	exitscan	= $c0ae	; ?
 	notrow	= $c0a3	; ?
 	scan	= $cb
 	init	= $c006	; ?
 	strout	= $c0b7	; ?
-	newkeylog	= $c0e8	; ?
+	newkeylog	= $c0ed	; ?
 	nextcol	= $c07d
 	kbdmatrix	= $eb81
 	doscan	= $c024	; ?

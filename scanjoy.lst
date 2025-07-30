@@ -27,7 +27,7 @@
     25  c003 4c24c0                 jmp doscan
     26                          
     27                          init:
-    28  c006 a9ee                   lda #<title
+    28  c006 a9f3                   lda #<title
     29  c008 a2c0                   ldx #>title
     30  c00a 20b7c0                 jsr strout
     31  c00d 78                     sei
@@ -35,7 +35,7 @@
     33  c010 a2c0                   ldx #>newirq
     34  c012 8d1403                 sta irqvector
     35  c015 8e1503                 stx irqvector+1
-    36  c018 a9e8                   lda #<newkeylog
+    36  c018 a9ed                   lda #<newkeylog
     37  c01a a2c0                   ldx #>newkeylog
     38  c01c 8d8f02                 sta keylogvector
     39  c01f 8e9002                 stx keylogvector+1
@@ -148,15 +148,17 @@
    146  c0df d0f8                   bne -
    147  c0e1 49ff                   eor #$ff
    148  c0e3 85fe                   sta joy2
-   149  c0e5 4c31ea                 jmp oldirq
-   150                          
-   151                          newkeylog:
-   152  c0e8 2024c0                 jsr doscan
-   153  c0eb 4c48eb                 jmp oldkeylog
-   154                          
-   155                          title: 
-   156  c0ee 93                     !byte 147
-   157  c0ef 125343414e4a4f59...    !text 18,"SCANJOY (C) 2024     GITHUB.COM/DAVERVW"
-   158  c117 9d9d9d9d9d9d9d9d...    !text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
-   159  c12c 1242592044415649...    !text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
-   160  c154 9d9d9d9d9d9d9d9d...    !text 157,157,157,157,157,157,157,157,157,157,148,32,13
+   149  c0e5 a97f                   lda #$7f
+   150  c0e7 8d00dc                 sta CIAPRA
+   151  c0ea 4c31ea                 jmp oldirq
+   152                          
+   153                          newkeylog:
+   154  c0ed 2024c0                 jsr doscan
+   155  c0f0 4c48eb                 jmp oldkeylog
+   156                          
+   157                          title: 
+   158  c0f3 93                     !byte 147
+   159  c0f4 125343414e4a4f59...    !text 18,"SCANJOY (C) 2025     GITHUB.COM/DAVERVW"
+   160  c11c 9d9d9d9d9d9d9d9d...    !text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
+   161  c131 1242592044415649...    !text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
+   162  c159 9d9d9d9d9d9d9d9d...    !text 157,157,157,157,157,157,157,157,157,157,148,32,13
