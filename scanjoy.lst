@@ -27,16 +27,16 @@
     25  c003 4c24c0                 jmp doscan
     26                          
     27                          init:
-    28  c006 a9f3                   lda #<title
-    29  c008 a2c0                   ldx #>title
-    30  c00a 20b7c0                 jsr strout
+    28  c006 a944                   lda #<title
+    29  c008 a2c1                   ldx #>title
+    30  c00a 20bac0                 jsr strout
     31  c00d 78                     sei
-    32  c00e a9c8                   lda #<newirq
+    32  c00e a9cb                   lda #<newirq
     33  c010 a2c0                   ldx #>newirq
     34  c012 8d1403                 sta irqvector
     35  c015 8e1503                 stx irqvector+1
-    36  c018 a9ed                   lda #<newkeylog
-    37  c01a a2c0                   ldx #>newkeylog
+    36  c018 a91b                   lda #<newkeylog
+    37  c01a a2c1                   ldx #>newkeylog
     38  c01c 8d8f02                 sta keylogvector
     39  c01f 8e9002                 stx keylogvector+1
     40  c022 58                     cli
@@ -54,7 +54,7 @@
     52  c035 cd01dc                 cmp CIAPRB
     53  c038 d0f8                   bne -
     54  c03a c9ff                   cmp #$ff
-    55  c03c f070                   beq exitscan
+    55  c03c f073                   beq exitscan
     56  c03e a000                   ldy #0
     57  c040 a2fe                   ldx #$fe
     58                          scancol:
@@ -117,48 +117,94 @@
    115  c0aa 2a                     rol
    116  c0ab aa                     tax
    117  c0ac b094                   bcs scancol
-   118                          exitscan:
-   119  c0ae a5cb                   lda scan
-   120  c0b0 ae8d02                 ldx shflag
-   121  c0b3 a000                   ldy #0
-   122  c0b5 28                     plp
-   123  c0b6 60                     rts
-   124                          
-   125                          strout:
-   126  c0b7 85fb                   sta $fb
-   127  c0b9 86fc                   stx $fc
-   128  c0bb a000                   ldy #0
-   129  c0bd b1fb               -   lda ($fb),y
-   130  c0bf f006                   beq +
-   131  c0c1 20d2ff                 jsr CHROUT
-   132  c0c4 c8                     iny
-   133  c0c5 d0f6                   bne -
-   134  c0c7 60                 +   rts
-   135                          
-   136                          newirq:
-   137  c0c8 a9ff                   lda #$ff
-   138  c0ca 8d00dc                 sta CIAPRA
-   139  c0cd ad01dc             -   lda CIAPRB
-   140  c0d0 cd01dc                 cmp CIAPRB
-   141  c0d3 d0f8                   bne -
-   142  c0d5 49ff                   eor #$ff
-   143  c0d7 85fd                   sta joy1
-   144  c0d9 ad00dc             -   lda CIAPRA
-   145  c0dc cd00dc                 cmp CIAPRA
-   146  c0df d0f8                   bne -
-   147  c0e1 49ff                   eor #$ff
-   148  c0e3 85fe                   sta joy2
-   149  c0e5 a97f                   lda #$7f
-   150  c0e7 8d00dc                 sta CIAPRA
-   151  c0ea 4c31ea                 jmp oldirq
-   152                          
-   153                          newkeylog:
-   154  c0ed 2024c0                 jsr doscan
-   155  c0f0 4c48eb                 jmp oldkeylog
-   156                          
-   157                          title: 
-   158  c0f3 93                     !byte 147
-   159  c0f4 125343414e4a4f59...    !text 18,"SCANJOY (C) 2025     GITHUB.COM/DAVERVW"
-   160  c11c 9d9d9d9d9d9d9d9d...    !text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
-   161  c131 1242592044415649...    !text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
-   162  c159 9d9d9d9d9d9d9d9d...    !text 157,157,157,157,157,157,157,157,157,157,148,32,13
+   118  c0ae 2021c1                 jsr checkjoy1fire2
+   119                          exitscan:
+   120  c0b1 a5cb                   lda scan
+   121  c0b3 ae8d02                 ldx shflag
+   122  c0b6 a000                   ldy #0
+   123  c0b8 28                     plp
+   124  c0b9 60                     rts
+   125                          
+   126                          strout:
+   127  c0ba 85fb                   sta $fb
+   128  c0bc 86fc                   stx $fc
+   129  c0be a000                   ldy #0
+   130  c0c0 b1fb               -   lda ($fb),y
+   131  c0c2 f006                   beq +
+   132  c0c4 20d2ff                 jsr CHROUT
+   133  c0c7 c8                     iny
+   134  c0c8 d0f6                   bne -
+   135  c0ca 60                 +   rts
+   136                          
+   137                          newirq:
+   138                          ; read joystick 1
+   139  c0cb a9ff                   lda #$ff
+   140  c0cd 8d00dc                 sta CIAPRA
+   141  c0d0 ad01dc             -   lda CIAPRB
+   142  c0d3 cd01dc                 cmp CIAPRB
+   143  c0d6 d0f8                   bne -
+   144  c0d8 49ff                   eor #$ff
+   145  c0da 291f                   and #$1f
+   146  c0dc 85fd                   sta joy1
+   147  c0de 2021c1                 jsr checkjoy1fire2
+   148                          
+   149                          ; read joystick 2
+   150  c0e1 a9ff                   lda #$ff
+   151  c0e3 8d02dc                 sta $dc02
+   152  c0e6 a9ff                   lda #$ff
+   153  c0e8 8d00dc                 sta $dc00
+   154  c0eb ad00dc             -   lda CIAPRA
+   155  c0ee cd00dc                 cmp CIAPRA
+   156  c0f1 d0f8                   bne -
+   157  c0f3 49ff                   eor #$ff
+   158  c0f5 291f                   and #$1f
+   159  c0f7 85fe                   sta joy2
+   160  c0f9 a9bf                   lda #$ff-$40
+   161  c0fb 8d00dc                 sta $dc00
+   162  c0fe 203cc1                 jsr delay512instructions
+   163  c101 ad19d4             -   lda $d419
+   164  c104 cd19d4                 cmp $d419
+   165  c107 d0f8                   bne -
+   166  c109 c900                   cmp #0
+   167  c10b d006                   bne +
+   168  c10d a5fe                   lda joy2
+   169  c10f 0920                   ora #$20
+   170  c111 85fe                   sta joy2
+   171                          
+   172  c113 a97f               +   lda #$7f
+   173  c115 8d00dc                 sta CIAPRA
+   174  c118 4c31ea                 jmp oldirq
+   175                          
+   176                          newkeylog:
+   177  c11b 2024c0                 jsr doscan
+   178  c11e 4c48eb                 jmp oldkeylog
+   179                          
+   180                          checkjoy1fire2:
+   181  c121 a97f                   lda #$ff-$80
+   182  c123 8d00dc                 sta CIAPRA
+   183  c126 203cc1                 jsr delay512instructions
+   184  c129 ad19d4             -   lda $d419
+   185  c12c cd19d4                 cmp $d419
+   186  c12f d0f8                   bne -
+   187  c131 c900                   cmp #0
+   188  c133 d006                   bne +
+   189  c135 a5fd                   lda joy1
+   190  c137 0920                   ora #$20
+   191  c139 85fd                   sta joy1
+   192  c13b 60                 +   rts
+   193                          
+   194                          ; 6 + 2 + 99 * (2+3) - 1 + 2 + 2 + 6 = 8 + 495 + 9 = 512
+   195                          delay512instructions: ; JSR = 6 cycles
+   196  c13c a263                   ldx #99 ; 2 cycles
+   197  c13e ca                 -   dex ; 2 cycles
+   198  c13f d0fd                   bne - ; 3 cycles branch -or- 2 cycles w/o -or- 4 across page
+   199  c141 18                     clc ; 2 cycles
+   200  c142 18                     clc ; 2 cycles
+   201  c143 60                     rts ; 6 cycles
+   202                          
+   203                          title: 
+   204  c144 93                     !byte 147
+   205  c145 125343414e4a4f59...    !text 18,"SCANJOY (C) 2025     GITHUB.COM/DAVERVW"
+   206  c16d 9d9d9d9d9d9d9d9d...    !text 157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,157,148,32,13
+   207  c182 1242592044415649...    !text 18,"BY DAVID R. VAN WAGNER       DAVEVW.COM"
+   208  c1aa 9d9d9d9d9d9d9d9d...    !text 157,157,157,157,157,157,157,157,157,157,148,32,13

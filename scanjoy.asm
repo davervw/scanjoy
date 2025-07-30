@@ -115,6 +115,7 @@ notrow:
     rol
     tax
     bcs scancol
+    jsr checkjoy1fire2
 exitscan:
     lda scan
     ldx shflag
@@ -134,25 +135,70 @@ strout:
 +   rts
 
 newirq:
+; read joystick 1
     lda #$ff
     sta CIAPRA
 -   lda CIAPRB
     cmp CIAPRB
     bne -
     eor #$ff
+    and #$1f
     sta joy1
+    jsr checkjoy1fire2
+
+; read joystick 2
+    lda #$ff
+    sta $dc02
+    lda #$ff
+    sta $dc00
 -   lda CIAPRA
     cmp CIAPRA
     bne -
     eor #$ff
+    and #$1f
     sta joy2
-    lda #$7f
+    lda #$ff-$40
+    sta $dc00
+    jsr delay512instructions
+-   lda $d419
+    cmp $d419
+    bne -
+    cmp #0
+    bne +
+    lda joy2
+    ora #$20
+    sta joy2
+
++   lda #$7f
     sta CIAPRA
     jmp oldirq
 
 newkeylog:
     jsr doscan
     jmp oldkeylog
+
+checkjoy1fire2:
+    lda #$ff-$80
+    sta CIAPRA
+    jsr delay512instructions
+-   lda $d419
+    cmp $d419
+    bne -
+    cmp #0
+    bne +
+    lda joy1
+    ora #$20
+    sta joy1
++   rts
+
+; 6 + 2 + 99 * (2+3) - 1 + 2 + 2 + 6 = 8 + 495 + 9 = 512
+delay512instructions: ; JSR = 6 cycles
+    ldx #99 ; 2 cycles
+-   dex ; 2 cycles
+    bne - ; 3 cycles branch -or- 2 cycles w/o -or- 4 across page
+    clc ; 2 cycles
+    clc ; 2 cycles
+    rts ; 6 cycles
 
 title: 
     !byte 147
